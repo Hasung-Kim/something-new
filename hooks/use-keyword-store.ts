@@ -60,5 +60,14 @@ export function useKeywordStore() {
     })
   }
 
-  return { keywords, add, remove, moveLeft, moveRight }
+  function update(id: string, label: string, sort: SortOrder) {
+    const trimmed = label.trim()
+    if (!trimmed) return
+    setKeywords(prev => {
+      if (prev.some(k => k.id !== id && k.label === trimmed && k.sort === sort)) return prev
+      return prev.map(k => k.id === id ? { ...k, label: trimmed, sort } : k)
+    })
+  }
+
+  return { keywords, add, remove, moveLeft, moveRight, update }
 }

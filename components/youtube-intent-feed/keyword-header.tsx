@@ -29,6 +29,7 @@ type KeywordHeaderProps = {
   onRemove: (id: string) => void
   onMoveLeft: (id: string) => void
   onMoveRight: (id: string) => void
+  onEdit: (id: string, label: string, sort: SortOrder) => void
 }
 
 export function KeywordHeader({
@@ -37,6 +38,7 @@ export function KeywordHeader({
   onRemove,
   onMoveLeft,
   onMoveRight,
+  onEdit,
 }: KeywordHeaderProps) {
   const [input, setInput] = useState('')
   const [sort, setSort] = useState<SortOrder>('relevance')
@@ -66,6 +68,7 @@ export function KeywordHeader({
               onRemove={() => onRemove(kw.id)}
               onMoveLeft={() => onMoveLeft(kw.id)}
               onMoveRight={() => onMoveRight(kw.id)}
+              onEdit={onEdit}
             />
           ))}
         </div>
