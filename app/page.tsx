@@ -12,6 +12,12 @@ export default function Page() {
   return (
     <div className="min-h-screen bg-background">
       <div className="@container max-w-screen-2xl mx-auto p-4">
+        <div className="mb-6">
+          <h1 className="text-2xl font-bold tracking-tight">YouTube Multi Search</h1>
+          <p className="text-sm text-muted-foreground mt-1">
+            관심 키워드를 추가하면 YouTube 영상을 한 화면에서 병렬로 탐색할 수 있습니다
+          </p>
+        </div>
         <header className="mb-4 flex gap-2 items-start">
           <div className="flex-1">
             <KeywordHeader
