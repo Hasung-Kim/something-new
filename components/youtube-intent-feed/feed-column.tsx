@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback } from 'react'
 import { RefreshCwIcon, WifiOffIcon } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
+import { cn } from '@/lib/utils'
 import { Alert, AlertTitle, AlertDescription, AlertAction } from '@/components/ui/alert'
 import { SkeletonCard } from './skeleton-card'
 import { VideoCard } from './video-card'
@@ -69,9 +70,21 @@ export function FeedColumn({ keyword, showHeader = true }: FeedColumnProps) {
       {showHeader && (
         <div className="flex items-center justify-between pb-2 border-b border-border">
           <span className="text-sm font-bold">{keyword}</span>
-          {state.status === 'success' && (
-            <Badge variant="secondary">{state.videos.length}개</Badge>
-          )}
+          <div className="flex items-center gap-1.5">
+            {state.status === 'success' && (
+              <Badge variant="secondary">{state.videos.length}개</Badge>
+            )}
+            <Button
+              variant="ghost"
+              size="icon"
+              className="size-6"
+              onClick={() => load()}
+              disabled={state.status === 'loading'}
+              aria-label={`${keyword} 재검색`}
+            >
+              <RefreshCwIcon className={cn('size-3.5', state.status === 'loading' && 'animate-spin')} />
+            </Button>
+          </div>
         </div>
       )}
 
