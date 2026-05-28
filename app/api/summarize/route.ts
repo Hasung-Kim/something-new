@@ -62,7 +62,7 @@ export async function POST(request: Request) {
 
   try {
     const genai = new GoogleGenerativeAI(apiKey)
-    const model = genai.getGenerativeModel({ model: 'gemini-2.0-flash-lite' })
+    const model = genai.getGenerativeModel({ model: 'gemini-2.5-flash' })
     const result = await model.generateContent(prompt)
     const summary = result.response.text().trim()
 
