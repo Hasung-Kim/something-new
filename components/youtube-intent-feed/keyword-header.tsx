@@ -1,9 +1,14 @@
 'use client'
 
 import { useState } from 'react'
-import { PlusIcon } from 'lucide-react'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
+import { PlusIcon, InfoIcon } from 'lucide-react'
+import {
+  InputGroup,
+  InputGroupInput,
+  InputGroupAddon,
+  InputGroupButton,
+} from '@/components/ui/input-group'
+import { Alert, AlertDescription } from '@/components/ui/alert'
 import { KeywordChip } from './keyword-chip'
 import type { Keyword } from '@/types/keyword'
 
@@ -39,9 +44,9 @@ export function KeywordHeader({
   }
 
   return (
-    <div className="border border-border rounded-lg p-3 bg-background">
+    <div className="border border-border rounded-lg p-3 bg-background flex flex-col gap-2">
       {keywords.length > 0 && (
-        <div className="flex flex-wrap gap-1.5 mb-3">
+        <div className="flex flex-wrap gap-1.5">
           {keywords.map((kw, idx) => (
             <KeywordChip
               key={kw.id}
@@ -56,29 +61,34 @@ export function KeywordHeader({
         </div>
       )}
 
-      <div className="flex gap-2">
-        <Input
+      <InputGroup>
+        <InputGroupInput
           value={input}
           onChange={e => setInput(e.target.value)}
           onKeyDown={handleKeyDown}
           placeholder="관심 키워드 입력 (예: React, 주식)"
           disabled={isMax}
-          className="flex-1"
         />
-        <Button
-          onClick={handleAdd}
-          disabled={isMax}
-          aria-label="추가"
-        >
-          <PlusIcon data-icon="inline-start" />
-          추가
-        </Button>
-      </div>
+        <InputGroupAddon align="inline-end">
+          <InputGroupButton
+            onClick={handleAdd}
+            disabled={isMax}
+            variant="default"
+            size="xs"
+          >
+            <PlusIcon data-icon="inline-start" />
+            추가
+          </InputGroupButton>
+        </InputGroupAddon>
+      </InputGroup>
 
       {isMax && (
-        <p className="text-xs text-muted-foreground mt-2">
-          최대 6개까지 추가할 수 있습니다. 기존 키워드를 삭제하면 추가할 수 있어요.
-        </p>
+        <Alert>
+          <InfoIcon />
+          <AlertDescription>
+            최대 6개까지 추가할 수 있습니다. 기존 키워드를 삭제하면 추가할 수 있어요.
+          </AlertDescription>
+        </Alert>
       )}
     </div>
   )

@@ -3,6 +3,8 @@
 import { useState, useEffect, useCallback } from 'react'
 import { RefreshCwIcon, WifiOffIcon } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { Badge } from '@/components/ui/badge'
+import { Alert, AlertTitle, AlertDescription, AlertAction } from '@/components/ui/alert'
 import { SkeletonCard } from './skeleton-card'
 import { VideoCard } from './video-card'
 import type { Video } from '@/types/video'
@@ -68,10 +70,7 @@ export function FeedColumn({ keyword, showHeader = true }: FeedColumnProps) {
         <div className="flex items-center justify-between pb-2 border-b border-border">
           <span className="text-sm font-bold">{keyword}</span>
           {state.status === 'success' && (
-            <span className="text-xs text-muted-foreground">{state.videos.length}개</span>
-          )}
-          {state.status === 'error' && (
-            <WifiOffIcon className="size-4 text-muted-foreground" />
+            <Badge variant="secondary">{state.videos.length}개</Badge>
           )}
         </div>
       )}
@@ -85,14 +84,17 @@ export function FeedColumn({ keyword, showHeader = true }: FeedColumnProps) {
       )}
 
       {state.status === 'error' && (
-        <div className="flex flex-col items-center justify-center py-10 border border-border rounded-lg text-center gap-3 bg-background">
-          <WifiOffIcon className="size-8 text-muted-foreground" />
-          <p className="text-sm text-muted-foreground">영상을 불러오지 못했습니다</p>
-          <Button variant="outline" size="sm" onClick={() => load()}>
-            <RefreshCwIcon data-icon="inline-start" />
-            다시 시도
-          </Button>
-        </div>
+        <Alert>
+          <WifiOffIcon />
+          <AlertTitle>영상을 불러오지 못했습니다</AlertTitle>
+          <AlertDescription>잠시 후 다시 시도해 주세요.</AlertDescription>
+          <AlertAction>
+            <Button variant="outline" size="sm" onClick={() => load()}>
+              <RefreshCwIcon data-icon="inline-start" />
+              다시 시도
+            </Button>
+          </AlertAction>
+        </Alert>
       )}
 
       {state.status === 'success' && (

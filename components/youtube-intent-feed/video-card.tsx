@@ -3,6 +3,7 @@
 import Image from 'next/image'
 import { LoaderIcon, SparklesIcon } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { Card, CardContent } from '@/components/ui/card'
 import type { Video } from '@/types/video'
 
 type VideoCardProps = {
@@ -21,7 +22,7 @@ export function VideoCard({ video, summarizing = false, onSummarize }: VideoCard
   }).format(new Date(video.publishedAt))
 
   return (
-    <div className="border border-border rounded-lg overflow-hidden bg-background">
+    <Card size="sm" className="py-0 gap-0">
       <a href={youtubeUrl} target="_blank" rel="noopener noreferrer" className="block">
         <div className="relative aspect-video w-full bg-muted">
           <Image
@@ -37,16 +38,16 @@ export function VideoCard({ video, summarizing = false, onSummarize }: VideoCard
             </span>
           )}
         </div>
-        <div className="p-3">
+        <CardContent className="px-3 pt-2 pb-1">
           <p className="text-sm font-medium leading-tight line-clamp-2 mb-1">{video.title}</p>
           <div className="flex justify-between items-center text-xs text-muted-foreground">
-            <span>{video.channelTitle}</span>
-            <span data-testid="published-date">{formattedDate}</span>
+            <span className="truncate mr-2">{video.channelTitle}</span>
+            <span data-testid="published-date" className="shrink-0">{formattedDate}</span>
           </div>
-        </div>
+        </CardContent>
       </a>
 
-      <div className="px-3 pb-3">
+      <CardContent className="px-3 pb-3 pt-1">
         {video.aiSummary ? (
           <div className="text-xs p-2 rounded-md border border-border bg-muted/50 flex gap-1.5">
             <SparklesIcon className="size-3 mt-0.5 shrink-0 text-muted-foreground" />
@@ -70,7 +71,7 @@ export function VideoCard({ video, summarizing = false, onSummarize }: VideoCard
             )}
           </Button>
         )}
-      </div>
-    </div>
+      </CardContent>
+    </Card>
   )
 }
