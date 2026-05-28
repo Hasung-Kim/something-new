@@ -1,18 +1,20 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 
-const { mockCreate, mockLimit } = vi.hoisted(() => ({
-  mockCreate: vi.fn().mockResolvedValue({
-    content: [{ type: 'text', text: 'React 18의 핵심 기능을 설명합니다.' }],
+const { mockGenerateContent, mockLimit } = vi.hoisted(() => ({
+  mockGenerateContent: vi.fn().mockResolvedValue({
+    response: { text: () => 'React 18의 핵심 기능을 설명합니다.' },
   }),
   mockLimit: vi.fn().mockResolvedValue({ success: true }),
 }))
 
-vi.mock('@anthropic-ai/sdk', () => {
-  class Anthropic {
-    messages = { create: mockCreate }
-    constructor(_opts: unknown) {}
+vi.mock('@google/generative-ai', () => {
+  class GoogleGenerativeAI {
+    constructor(_apiKey: string) {}
+    getGenerativeModel(_opts: unknown) {
+      return { generateContent: mockGenerateContent }
+    }
   }
-  return { default: Anthropic }
+  return { GoogleGenerativeAI }
 })
 
 vi.mock('@upstash/ratelimit', () => {
@@ -27,7 +29,7 @@ import { POST } from './route'
 
 beforeEach(() => {
   vi.clearAllMocks()
-  process.env.ANTHROPIC_API_KEY = 'test-key'
+  process.env.GEMINI_API_KEY = 'test-key'
   process.env.UPSTASH_REDIS_REST_URL = ''
   process.env.UPSTASH_REDIS_REST_TOKEN = ''
 })
@@ -69,8 +71,8 @@ describe('POST /api/summarize', () => {
     expect(res.status).toBe(429)
   })
 
-  it('response does not contain ANTHROPIC_API_KEY value', async () => {
-    process.env.ANTHROPIC_API_KEY = 'super-secret-key-xyz'
+  it('response does not contain GEMINI_API_KEY value', async () => {
+    process.env.GEMINI_API_KEY = 'super-secret-gemini-key-xyz'
     const req = new Request('http://localhost/api/summarize', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -78,6 +80,6 @@ describe('POST /api/summarize', () => {
     })
     const res = await POST(req)
     const text = await res.text()
-    expect(text).not.toContain('super-secret-key-xyz')
+    expect(text).not.toContain('super-secret-gemini-key-xyz')
   })
 })
