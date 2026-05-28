@@ -15,7 +15,7 @@ export default function Page() {
         <div className="mb-6 text-center">
           <h1 className="text-2xl font-bold tracking-tight">YouTube Multi Search</h1>
           <p className="text-sm text-muted-foreground mt-1">
-            관심 키워드를 추가하면 YouTube 영상을 한 화면에서 병렬로 탐색할 수 있습니다
+            알고리즘 기반 추천은 이제 그만! 내가 원하는 다양한 키워드를 추가하면 한 화면에서 볼 수 있습니다
           </p>
         </div>
         <header className="mb-4 flex gap-2 items-start">
