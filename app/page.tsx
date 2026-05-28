@@ -5,9 +5,10 @@ import { KeywordHeader } from '@/components/youtube-intent-feed/keyword-header'
 import { FeedLayout } from '@/components/youtube-intent-feed/feed-layout'
 import { EmptyState } from '@/components/youtube-intent-feed/empty-state'
 import { ThemeToggle } from '@/components/theme-toggle'
+import { NoticeDialog } from '@/components/notice-dialog'
 
 export default function Page() {
-  const { keywords, add, remove, moveLeft, moveRight } = useKeywordStore()
+  const { keywords, add, remove, moveLeft, moveRight, update } = useKeywordStore()
 
   return (
     <div className="min-h-screen bg-background">
@@ -26,9 +27,13 @@ export default function Page() {
               onRemove={remove}
               onMoveLeft={moveLeft}
               onMoveRight={moveRight}
+              onEdit={update}
             />
           </div>
-          <ThemeToggle />
+          <div className="flex flex-col gap-2">
+            <ThemeToggle />
+            <NoticeDialog />
+          </div>
         </header>
 
         <main>
