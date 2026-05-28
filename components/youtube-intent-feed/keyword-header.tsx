@@ -8,15 +8,24 @@ import {
   InputGroupAddon,
   InputGroupButton,
 } from '@/components/ui/input-group'
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { KeywordChip } from './keyword-chip'
-import type { Keyword } from '@/types/keyword'
+import type { Keyword, SortOrder } from '@/types/keyword'
+import { SORT_LABELS } from '@/types/keyword'
 
 const MAX_KEYWORDS = 6
 
 type KeywordHeaderProps = {
   keywords: Keyword[]
-  onAdd: (label: string) => void
+  onAdd: (label: string, sort: SortOrder) => void
   onRemove: (id: string) => void
   onMoveLeft: (id: string) => void
   onMoveRight: (id: string) => void
@@ -30,12 +39,13 @@ export function KeywordHeader({
   onMoveRight,
 }: KeywordHeaderProps) {
   const [input, setInput] = useState('')
+  const [sort, setSort] = useState<SortOrder>('relevance')
   const isMax = keywords.length >= MAX_KEYWORDS
 
   function handleAdd() {
     const trimmed = input.trim()
     if (!trimmed) return
-    onAdd(trimmed)
+    onAdd(trimmed, sort)
     setInput('')
   }
 
@@ -61,26 +71,41 @@ export function KeywordHeader({
         </div>
       )}
 
-      <InputGroup>
-        <InputGroupInput
-          value={input}
-          onChange={e => setInput(e.target.value)}
-          onKeyDown={handleKeyDown}
-          placeholder="관심 키워드 입력 (예: React, 주식)"
-          disabled={isMax}
-        />
-        <InputGroupAddon align="inline-end">
-          <InputGroupButton
-            onClick={handleAdd}
+      <div className="flex gap-2">
+        <Select value={sort} onValueChange={(v) => setSort(v as SortOrder)} disabled={isMax}>
+          <SelectTrigger className="w-28 shrink-0">
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectGroup>
+              {(Object.entries(SORT_LABELS) as [SortOrder, string][]).map(([value, label]) => (
+                <SelectItem key={value} value={value}>{label}</SelectItem>
+              ))}
+            </SelectGroup>
+          </SelectContent>
+        </Select>
+
+        <InputGroup className="flex-1">
+          <InputGroupInput
+            value={input}
+            onChange={e => setInput(e.target.value)}
+            onKeyDown={handleKeyDown}
+            placeholder="관심 키워드 입력 (예: React, 주식)"
             disabled={isMax}
-            variant="default"
-            size="xs"
-          >
-            <PlusIcon data-icon="inline-start" />
-            추가
-          </InputGroupButton>
-        </InputGroupAddon>
-      </InputGroup>
+          />
+          <InputGroupAddon align="inline-end">
+            <InputGroupButton
+              onClick={handleAdd}
+              disabled={isMax}
+              variant="default"
+              size="xs"
+            >
+              <PlusIcon data-icon="inline-start" />
+              추가
+            </InputGroupButton>
+          </InputGroupAddon>
+        </InputGroup>
+      </div>
 
       {isMax && (
         <Alert>

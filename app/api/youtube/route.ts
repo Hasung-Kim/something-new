@@ -2,6 +2,9 @@ import { NextResponse } from 'next/server'
 import { Ratelimit } from '@upstash/ratelimit'
 import { Redis } from '@upstash/redis'
 import { fetchYouTubeVideos } from '@/lib/youtube-api'
+import type { SortOrder } from '@/types/keyword'
+
+const VALID_SORTS: SortOrder[] = ['relevance', 'date', 'viewCount']
 
 function getRatelimiter() {
   const url = process.env.UPSTASH_REDIS_REST_URL
@@ -36,8 +39,13 @@ export async function GET(request: Request) {
     }
   }
 
+  const sortParam = searchParams.get('sort') ?? 'relevance'
+  const sort: SortOrder = VALID_SORTS.includes(sortParam as SortOrder)
+    ? (sortParam as SortOrder)
+    : 'relevance'
+
   try {
-    const videos = await fetchYouTubeVideos(trimmed)
+    const videos = await fetchYouTubeVideos(trimmed, sort)
     return NextResponse.json({ videos })
   } catch {
     return NextResponse.json({ error: 'Failed to fetch videos' }, { status: 500 })

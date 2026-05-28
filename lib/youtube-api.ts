@@ -1,5 +1,6 @@
 import { unstable_cache } from 'next/cache'
 import type { Video } from '@/types/video'
+import type { SortOrder } from '@/types/keyword'
 
 type YouTubeSearchItem = {
   id: { videoId: string }
@@ -54,7 +55,7 @@ async function fetchDurations(ids: string[], apiKey: string): Promise<Record<str
   )
 }
 
-async function searchYouTube(keyword: string): Promise<Video[]> {
+async function searchYouTube(keyword: string, sort: SortOrder = 'relevance'): Promise<Video[]> {
   const apiKey = process.env.YOUTUBE_API_KEY
   if (!apiKey) throw new Error('YOUTUBE_API_KEY is not set')
 
@@ -62,7 +63,7 @@ async function searchYouTube(keyword: string): Promise<Video[]> {
   url.searchParams.set('part', 'snippet')
   url.searchParams.set('type', 'video')
   url.searchParams.set('maxResults', '8')
-  url.searchParams.set('order', 'relevance')
+  url.searchParams.set('order', sort)
   url.searchParams.set('q', keyword)
   url.searchParams.set('key', apiKey)
 

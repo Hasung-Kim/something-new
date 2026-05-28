@@ -9,9 +9,12 @@ import { Alert, AlertTitle, AlertDescription, AlertAction } from '@/components/u
 import { SkeletonCard } from './skeleton-card'
 import { VideoCard } from './video-card'
 import type { Video } from '@/types/video'
+import type { SortOrder } from '@/types/keyword'
+import { SORT_LABELS } from '@/types/keyword'
 
 type FeedColumnProps = {
   keyword: string
+  sort?: SortOrder
   showHeader?: boolean
 }
 
@@ -20,14 +23,17 @@ type State =
   | { status: 'error' }
   | { status: 'success'; videos: Video[] }
 
-export function FeedColumn({ keyword, showHeader = true }: FeedColumnProps) {
+export function FeedColumn({ keyword, sort = 'relevance', showHeader = true }: FeedColumnProps) {
   const [state, setState] = useState<State>({ status: 'loading' })
   const [summarizing, setSummarizing] = useState<string | null>(null)
 
   const load = useCallback(async (signal?: AbortSignal) => {
     setState({ status: 'loading' })
     try {
-      const res = await fetch(`/api/youtube?keyword=${encodeURIComponent(keyword)}`, { signal })
+      const res = await fetch(
+        `/api/youtube?keyword=${encodeURIComponent(keyword)}&sort=${sort}`,
+        { signal }
+      )
       if (!res.ok) throw new Error(`HTTP ${res.status}`)
       const data = await res.json()
       setState({ status: 'success', videos: data.videos })
@@ -69,7 +75,10 @@ export function FeedColumn({ keyword, showHeader = true }: FeedColumnProps) {
     <div className="flex flex-col gap-2">
       {showHeader && (
         <div className="flex items-center justify-between pb-2 border-b border-border">
-          <span className="text-sm font-bold">{keyword}</span>
+          <div>
+            <span className="text-sm font-bold">{keyword}</span>
+            <span className="text-xs text-muted-foreground ml-1.5">{SORT_LABELS[sort]}</span>
+          </div>
           <div className="flex items-center gap-1.5">
             {state.status === 'success' && (
               <Badge variant="secondary">{state.videos.length}개</Badge>

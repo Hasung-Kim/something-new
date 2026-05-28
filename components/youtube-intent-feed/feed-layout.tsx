@@ -38,7 +38,7 @@ export function FeedLayout({ keywords }: FeedLayoutProps) {
           ))}
         </TabsList>
         <div className="mt-3">
-          <FeedColumn keyword={activeKeyword.label} showHeader={false} />
+          <FeedColumn keyword={activeKeyword.label} sort={activeKeyword.sort} showHeader={false} />
         </div>
       </Tabs>
 
@@ -47,7 +47,7 @@ export function FeedLayout({ keywords }: FeedLayoutProps) {
         <div className="flex gap-4 pb-4">
           {keywords.map(kw => (
             <div key={kw.id} className="min-w-64 w-72 flex-shrink-0">
-              <FeedColumn keyword={kw.label} showHeader />
+              <FeedColumn keyword={kw.label} sort={kw.sort} showHeader />
             </div>
           ))}
         </div>

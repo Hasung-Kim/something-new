@@ -4,7 +4,7 @@ import { KeywordHeader } from './keyword-header'
 import type { Keyword } from '@/types/keyword'
 
 function makeKeyword(label: string, idx: number): Keyword {
-  return { id: `id-${idx}`, label, order: idx }
+  return { id: `id-${idx}`, label, order: idx, sort: 'relevance' }
 }
 
 const noop = () => {}
@@ -14,7 +14,7 @@ describe('KeywordHeader', () => {
     const onAdd = vi.fn()
     render(<KeywordHeader keywords={[]} onAdd={onAdd} onRemove={noop} onMoveLeft={noop} onMoveRight={noop} />)
     await userEvent.type(screen.getByRole('textbox'), 'React{Enter}')
-    expect(onAdd).toHaveBeenCalledWith('React')
+    expect(onAdd).toHaveBeenCalledWith('React', 'relevance')
   })
 
   it('adds chip on button click', async () => {
@@ -22,7 +22,7 @@ describe('KeywordHeader', () => {
     render(<KeywordHeader keywords={[]} onAdd={onAdd} onRemove={noop} onMoveLeft={noop} onMoveRight={noop} />)
     await userEvent.type(screen.getByRole('textbox'), 'React')
     await userEvent.click(screen.getByRole('button', { name: /추가/ }))
-    expect(onAdd).toHaveBeenCalledWith('React')
+    expect(onAdd).toHaveBeenCalledWith('React', 'relevance')
   })
 
   it('clears input after add', async () => {

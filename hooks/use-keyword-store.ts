@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import type { Keyword } from '@/types/keyword'
+import type { Keyword, SortOrder } from '@/types/keyword'
 
 const STORAGE_KEY = 'youtube-intent-feed-keywords'
 const MAX_KEYWORDS = 6
@@ -26,13 +26,13 @@ export function useKeywordStore() {
     if (mounted) localStorage.setItem(STORAGE_KEY, JSON.stringify(keywords))
   }, [keywords, mounted])
 
-  function add(label: string) {
+  function add(label: string, sort: SortOrder = 'relevance') {
     const trimmed = label.trim()
     if (!trimmed) return
     setKeywords(prev => {
       if (prev.some(k => k.label === trimmed)) return prev
       if (prev.length >= MAX_KEYWORDS) return prev
-      return [...prev, { id: crypto.randomUUID(), label: trimmed, order: prev.length }]
+      return [...prev, { id: crypto.randomUUID(), label: trimmed, order: prev.length, sort }]
     })
   }
 
