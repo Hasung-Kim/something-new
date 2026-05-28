@@ -17,6 +17,43 @@ type YouTubeSearchResponse = {
   error?: { message: string }
 }
 
+type YouTubeVideoItem = {
+  id: string
+  contentDetails: { duration: string }
+}
+
+type YouTubeVideosResponse = {
+  items?: YouTubeVideoItem[]
+}
+
+// ISO 8601 duration (PT4M13S) → "4:13", "1:23:45"
+function parseDuration(iso: string): string {
+  const m = iso.match(/PT(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?/)
+  if (!m) return ''
+  const h = parseInt(m[1] ?? '0')
+  const min = parseInt(m[2] ?? '0')
+  const sec = parseInt(m[3] ?? '0')
+  if (h > 0) {
+    return `${h}:${String(min).padStart(2, '0')}:${String(sec).padStart(2, '0')}`
+  }
+  return `${min}:${String(sec).padStart(2, '0')}`
+}
+
+async function fetchDurations(ids: string[], apiKey: string): Promise<Record<string, string>> {
+  const url = new URL('https://www.googleapis.com/youtube/v3/videos')
+  url.searchParams.set('part', 'contentDetails')
+  url.searchParams.set('id', ids.join(','))
+  url.searchParams.set('key', apiKey)
+
+  const res = await fetch(url.toString())
+  if (!res.ok) return {}
+
+  const data: YouTubeVideosResponse = await res.json()
+  return Object.fromEntries(
+    (data.items ?? []).map(item => [item.id, parseDuration(item.contentDetails.duration)])
+  )
+}
+
 async function searchYouTube(keyword: string): Promise<Video[]> {
   const apiKey = process.env.YOUTUBE_API_KEY
   if (!apiKey) throw new Error('YOUTUBE_API_KEY is not set')
@@ -35,7 +72,11 @@ async function searchYouTube(keyword: string): Promise<Video[]> {
   const data: YouTubeSearchResponse = await res.json()
   if (data.error) throw new Error(data.error.message)
 
-  return (data.items ?? []).map(item => ({
+  const items = data.items ?? []
+  const ids = items.map(item => item.id.videoId)
+  const durations = ids.length > 0 ? await fetchDurations(ids, apiKey) : {}
+
+  return items.map(item => ({
     id: item.id.videoId,
     title: item.snippet.title,
     channelTitle: item.snippet.channelTitle,
@@ -45,6 +86,7 @@ async function searchYouTube(keyword: string): Promise<Video[]> {
       item.snippet.thumbnails.default?.url ??
       '',
     description: item.snippet.description,
+    duration: durations[item.id.videoId],
   }))
 }
 

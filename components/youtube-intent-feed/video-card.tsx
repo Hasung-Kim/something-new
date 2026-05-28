@@ -31,6 +31,11 @@ export function VideoCard({ video, summarizing = false, onSummarize }: VideoCard
             className="object-cover"
             sizes="(max-width: 768px) 100vw, 320px"
           />
+          {video.duration && (
+            <span className="absolute bottom-1.5 right-1.5 bg-black/80 text-white text-xs px-1.5 py-0.5 rounded font-mono leading-none">
+              {video.duration}
+            </span>
+          )}
         </div>
         <div className="p-3">
           <p className="text-sm font-medium leading-tight line-clamp-2 mb-1">{video.title}</p>

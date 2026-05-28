@@ -5,5 +5,6 @@ export type Video = {
   publishedAt: string
   thumbnailUrl: string
   description: string
+  duration?: string  // "4:13", "1:23:45" 형식
   aiSummary?: string
 }
