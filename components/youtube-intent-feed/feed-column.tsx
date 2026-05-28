@@ -41,7 +41,7 @@ export function FeedColumn({ keyword, sort = 'relevance', showHeader = true }: F
       if (err instanceof Error && err.name === 'AbortError') return
       setState({ status: 'error' })
     }
-  }, [keyword])
+  }, [keyword, sort])
 
   useEffect(() => {
     const controller = new AbortController()
