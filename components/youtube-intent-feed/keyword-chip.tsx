@@ -4,6 +4,7 @@ import { ChevronLeftIcon, ChevronRightIcon, XIcon } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 import type { Keyword } from '@/types/keyword'
+import { SORT_LABELS } from '@/types/keyword'
 
 type KeywordChipProps = {
   keyword: Keyword
@@ -37,6 +38,7 @@ export function KeywordChip({
         <ChevronLeftIcon data-icon />
       </Button>
       <span className="px-1 font-medium">{keyword.label}</span>
+      <span className="text-xs text-muted-foreground pr-0.5">{SORT_LABELS[keyword.sort]}</span>
       <Button
         variant="ghost"
         size="icon"

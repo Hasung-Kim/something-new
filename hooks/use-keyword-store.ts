@@ -30,7 +30,7 @@ export function useKeywordStore() {
     const trimmed = label.trim()
     if (!trimmed) return
     setKeywords(prev => {
-      if (prev.some(k => k.label === trimmed)) return prev
+      if (prev.some(k => k.label === trimmed && k.sort === sort)) return prev
       if (prev.length >= MAX_KEYWORDS) return prev
       return [...prev, { id: crypto.randomUUID(), label: trimmed, order: prev.length, sort }]
     })
