@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { cn } from '@/lib/utils'
 import { FeedColumn } from './feed-column'
 import type { Keyword } from '@/types/keyword'
@@ -11,6 +11,12 @@ type FeedLayoutProps = {
 
 export function FeedLayout({ keywords }: FeedLayoutProps) {
   const [activeTab, setActiveTab] = useState(0)
+
+  useEffect(() => {
+    if (activeTab >= keywords.length) {
+      setActiveTab(Math.max(0, keywords.length - 1))
+    }
+  }, [keywords.length, activeTab])
 
   if (keywords.length === 0) return null
 
@@ -36,13 +42,11 @@ export function FeedLayout({ keywords }: FeedLayoutProps) {
         ))}
       </div>
 
-      {/* Mobile: 활성 탭 컬럼만 표시 */}
+      {/* Mobile: 활성 탭 컬럼만 렌더 */}
       <div className="@md:hidden">
-        {keywords.map((kw, idx) => (
-          <div key={kw.id} hidden={idx !== activeTab}>
-            <FeedColumn keyword={kw.label} showHeader={false} />
-          </div>
-        ))}
+        {keywords[activeTab] && (
+          <FeedColumn keyword={keywords[activeTab].label} showHeader={false} />
+        )}
       </div>
 
       {/* Desktop: 모든 컬럼 나란히 */}

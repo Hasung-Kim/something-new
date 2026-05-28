@@ -15,13 +15,14 @@ function makeKeywords(labels: string[]): Keyword[] {
 }
 
 describe('FeedLayout — renders all keywords', () => {
-  it('renders a column for each keyword', () => {
+  it('renders desktop columns for all keywords', () => {
     const keywords = makeKeywords(['React', '주식', '운동'])
     render(<FeedLayout keywords={keywords} />)
-    // Each keyword appears in both mobile and desktop sections
-    expect(screen.getAllByTestId('column-React')).toHaveLength(2)
-    expect(screen.getAllByTestId('column-주식')).toHaveLength(2)
-    expect(screen.getAllByTestId('column-운동')).toHaveLength(2)
+    // All 3 keywords render in the desktop section
+    // Active tab (React) also renders in the mobile section
+    expect(screen.getAllByTestId('column-React').length).toBeGreaterThanOrEqual(1)
+    expect(screen.getAllByTestId('column-주식').length).toBeGreaterThanOrEqual(1)
+    expect(screen.getAllByTestId('column-운동').length).toBeGreaterThanOrEqual(1)
   })
 })
 
@@ -48,13 +49,12 @@ describe('FeedLayout — tab UI', () => {
     expect(screen.getByRole('tab', { name: 'React' })).toHaveAttribute('aria-selected', 'false')
   })
 
-  it('hides inactive tab panel', () => {
+  it('only renders active tab column in mobile section', () => {
     const keywords = makeKeywords(['React', '주식'])
-    const { container } = render(<FeedLayout keywords={keywords} />)
-    // Mobile section: second tab panel has hidden attribute
-    const mobilePanels = container.querySelectorAll('.\\@md\\:hidden > div')
-    expect(mobilePanels[0]).not.toHaveAttribute('hidden')
-    expect(mobilePanels[1]).toHaveAttribute('hidden')
+    render(<FeedLayout keywords={keywords} />)
+    // Mobile section: only active tab (React) is mounted
+    // 주식 appears only in desktop section (1 instance total)
+    expect(screen.getAllByTestId('column-주식')).toHaveLength(1)
   })
 
   it('both columns render — error isolation per column', () => {

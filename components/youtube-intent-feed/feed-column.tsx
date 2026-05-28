@@ -21,20 +21,23 @@ export function FeedColumn({ keyword, showHeader = true }: FeedColumnProps) {
   const [state, setState] = useState<State>({ status: 'loading' })
   const [summarizing, setSummarizing] = useState<string | null>(null)
 
-  const load = useCallback(async () => {
+  const load = useCallback(async (signal?: AbortSignal) => {
     setState({ status: 'loading' })
     try {
-      const res = await fetch(`/api/youtube?keyword=${encodeURIComponent(keyword)}`)
+      const res = await fetch(`/api/youtube?keyword=${encodeURIComponent(keyword)}`, { signal })
       if (!res.ok) throw new Error(`HTTP ${res.status}`)
       const data = await res.json()
       setState({ status: 'success', videos: data.videos })
-    } catch {
+    } catch (err) {
+      if (err instanceof Error && err.name === 'AbortError') return
       setState({ status: 'error' })
     }
   }, [keyword])
 
   useEffect(() => {
-    load()
+    const controller = new AbortController()
+    load(controller.signal)
+    return () => controller.abort()
   }, [load])
 
   async function handleSummarize(video: Video) {
@@ -47,14 +50,11 @@ export function FeedColumn({ keyword, showHeader = true }: FeedColumnProps) {
       })
       if (!res.ok) throw new Error()
       const data = await res.json()
-      if (state.status === 'success') {
-        setState({
-          status: 'success',
-          videos: state.videos.map(v =>
-            v.id === video.id ? { ...v, aiSummary: data.summary } : v,
-          ),
-        })
-      }
+      setState(prev =>
+        prev.status === 'success'
+          ? { status: 'success', videos: prev.videos.map(v => v.id === video.id ? { ...v, aiSummary: data.summary } : v) }
+          : prev
+      )
     } catch {
       // summary failed — button restores
     } finally {
@@ -88,7 +88,7 @@ export function FeedColumn({ keyword, showHeader = true }: FeedColumnProps) {
         <div className="flex flex-col items-center justify-center py-10 border border-border rounded-lg text-center gap-3 bg-background">
           <WifiOffIcon className="size-8 text-muted-foreground" />
           <p className="text-sm text-muted-foreground">영상을 불러오지 못했습니다</p>
-          <Button variant="outline" size="sm" onClick={load}>
+          <Button variant="outline" size="sm" onClick={() => load()}>
             <RefreshCwIcon data-icon="inline-start" />
             다시 시도
           </Button>

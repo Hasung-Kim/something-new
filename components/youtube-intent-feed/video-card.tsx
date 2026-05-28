@@ -30,7 +30,6 @@ export function VideoCard({ video, summarizing = false, onSummarize }: VideoCard
             fill
             className="object-cover"
             sizes="(max-width: 768px) 100vw, 320px"
-            unoptimized
           />
         </div>
         <div className="p-3">

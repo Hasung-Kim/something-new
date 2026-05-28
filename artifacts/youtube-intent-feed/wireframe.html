@@ -1,0 +1,567 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Wireframe: youtube-intent-feed</title>
+<script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+<script src="https://unpkg.com/lucide@latest"></script>
+<style>
+  :root {
+    --w-bg: #f5f5f5;
+    --w-border: #ccc;
+    --w-text: #555;
+    --w-muted: #aaa;
+    --w-fill: #eee;
+  }
+  * { font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace; color: var(--w-text); }
+  body { background: var(--w-bg); }
+  nav { position: sticky; top: 0; z-index: 40; background: var(--w-bg); border-bottom: 1px solid var(--w-border); }
+  nav button { cursor: pointer; font-size: 13px; }
+  nav button:hover { background: var(--w-fill); border-radius: 4px; }
+  nav button.active { font-weight: bold; border-bottom: 2px solid var(--w-text); }
+  .screen { display: none; }
+  .screen.active { display: block; }
+  .vp-toggle button { font-size: 12px; padding: 2px 8px; border: 1px solid var(--w-border); cursor: pointer; background: white; }
+  .vp-toggle button:first-child { border-radius: 4px 0 0 4px; }
+  .vp-toggle button:last-child { border-radius: 0 4px 4px 0; border-left: none; }
+  .vp-toggle button.active { background: var(--w-text); color: white; }
+  body.viewport-mobile .screen-content {
+    max-width: 375px !important; margin: 24px auto !important;
+    border: 2px solid var(--w-border); border-radius: 24px; min-height: 667px;
+    background: white; box-shadow: 0 4px 24px rgba(0,0,0,0.08); padding: 16px !important; overflow: hidden;
+  }
+  .screen-notes { background: #fffde7; border-left: 3px solid #ffd54f; padding: 12px 16px; margin-top: 24px; font-size: 13px; border-radius: 0 4px 4px 0; }
+  .screen-notes summary { cursor: pointer; font-weight: bold; font-size: 12px; color: #b0a050; text-transform: uppercase; letter-spacing: 0.05em; }
+  .screen-notes p { margin: 6px 0 2px; color: #777; }
+  .screen-notes ul { margin: 4px 0 0 16px; padding: 0; color: #777; }
+  .screen-notes li { margin: 2px 0; }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.4} }
+  @keyframes spin { from{transform:rotate(0deg)} to{transform:rotate(360deg)} }
+  .w-skeleton { animation: pulse 1.5s ease-in-out infinite; background: var(--w-fill); border-radius: 4px; }
+  .w-spin { animation: spin 1s linear infinite; }
+</style>
+</head>
+<body class="p-0 m-0 viewport-mobile">
+
+<nav class="flex items-center gap-1 px-4 py-2 flex-wrap">
+  <span class="text-xs mr-2" style="color:var(--w-muted)">wireframe</span>
+  <button id="nav-0" onclick="show(0)" class="px-2 py-1">빈 상태</button>
+  <button id="nav-1" onclick="show(1)" class="px-2 py-1">메인 피드</button>
+  <button id="nav-2" onclick="show(2)" class="px-2 py-1">로딩</button>
+  <button id="nav-3" onclick="show(3)" class="px-2 py-1">AI 요약</button>
+  <button id="nav-4" onclick="show(4)" class="px-2 py-1">API 에러</button>
+  <button id="nav-5" onclick="show(5)" class="px-2 py-1">키워드 최대</button>
+  <div class="vp-toggle flex ml-auto">
+    <button id="vp-desktop" onclick="setViewport('desktop')">Desktop</button>
+    <button id="vp-mobile" onclick="setViewport('mobile')" class="active">Mobile</button>
+  </div>
+</nav>
+
+<!-- ===== SCREEN 0: 빈 상태 ===== -->
+<div id="screen-0" class="screen" data-scenario="scenario-1">
+  <div class="screen-content @container max-w-5xl mx-auto p-6">
+    <h2 class="text-base font-bold mb-4" style="color:var(--w-muted);border-bottom:1px solid var(--w-border);padding-bottom:8px">빈 상태 — 첫 방문</h2>
+
+    <!-- Header -->
+    <div class="border border-[--w-border] rounded-lg p-3 mb-6" style="background:white">
+      <div class="flex gap-2">
+        <input type="text" placeholder="관심 키워드 입력 (예: React, 주식)" class="flex-1 border border-[--w-border] rounded px-3 py-2 text-sm outline-none" style="background:white" />
+        <button class="flex items-center gap-1 px-3 py-2 border border-[--w-border] rounded text-sm">
+          <i data-lucide="plus" class="w-4 h-4"></i><span class="hidden @sm:inline">추가</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Empty state -->
+    <div class="flex flex-col items-center py-10 text-center">
+      <i data-lucide="layout-grid" class="w-10 h-10 mb-4" style="color:var(--w-muted)"></i>
+      <p class="text-sm mb-1" style="color:var(--w-text)">여러 관심사를 한 화면에서 보세요</p>
+      <p class="text-xs mb-6" style="color:var(--w-muted)">키워드를 추가하면 YouTube 영상이 컬럼별로 표시됩니다</p>
+      <p class="text-xs font-bold mb-3" style="color:var(--w-muted)">이런 키워드는 어떠세요?</p>
+      <div class="flex flex-wrap gap-2 justify-center">
+        <button class="px-3 py-1 border border-[--w-border] rounded-full text-sm" style="background:var(--w-fill)">React</button>
+        <button class="px-3 py-1 border border-[--w-border] rounded-full text-sm" style="background:var(--w-fill)">주식 투자</button>
+        <button class="px-3 py-1 border border-[--w-border] rounded-full text-sm" style="background:var(--w-fill)">헬스 운동</button>
+        <button class="px-3 py-1 border border-[--w-border] rounded-full text-sm" style="background:var(--w-fill)">요리 레시피</button>
+        <button class="px-3 py-1 border border-[--w-border] rounded-full text-sm" style="background:var(--w-fill)">영어 회화</button>
+        <button class="px-3 py-1 border border-[--w-border] rounded-full text-sm" style="background:var(--w-fill)">AI 뉴스</button>
+      </div>
+    </div>
+
+    <div class="screen-notes"><details open><summary>Notes</summary>
+      <p>시나리오 1 — 키워드 없음</p>
+      <ul>
+        <li>트리거: 로컬 스토리지 키워드 없음</li>
+        <li>인터랙션: 예시 칩 클릭 → 입력란에 텍스트 채워짐 / Enter 또는 추가 버튼으로 등록</li>
+        <li>전환: 키워드 1개 추가 → 메인 피드 화면</li>
+      </ul>
+    </details></div>
+  </div>
+</div>
+
+<!-- ===== SCREEN 1: 메인 피드 ===== -->
+<div id="screen-1" class="screen" data-scenario="scenario-2, scenario-4, scenario-5, scenario-7, scenario-10, scenario-11">
+  <div class="screen-content @container max-w-5xl mx-auto p-4">
+    <h2 class="text-base font-bold mb-4" style="color:var(--w-muted);border-bottom:1px solid var(--w-border);padding-bottom:8px">메인 피드 — 영상 로드 완료</h2>
+
+    <!-- Header: chips + input -->
+    <div class="border border-[--w-border] rounded-lg p-3 mb-4" style="background:white">
+      <div class="flex flex-wrap gap-1 mb-2">
+        <!-- Chip: React (첫번째, ← 비활성) -->
+        <span class="inline-flex items-center gap-0.5 px-2 py-1 border border-[--w-border] rounded text-xs" style="background:var(--w-fill)">
+          <button style="color:var(--w-muted);opacity:.3;cursor:not-allowed"><i data-lucide="chevron-left" class="w-3 h-3"></i></button>
+          <span class="px-1">React</span>
+          <button style="color:var(--w-muted)"><i data-lucide="chevron-right" class="w-3 h-3"></i></button>
+          <button style="color:var(--w-muted)"><i data-lucide="x" class="w-3 h-3"></i></button>
+        </span>
+        <!-- Chip: 주식 -->
+        <span class="inline-flex items-center gap-0.5 px-2 py-1 border border-[--w-border] rounded text-xs" style="background:var(--w-fill)">
+          <button style="color:var(--w-muted)"><i data-lucide="chevron-left" class="w-3 h-3"></i></button>
+          <span class="px-1">주식</span>
+          <button style="color:var(--w-muted)"><i data-lucide="chevron-right" class="w-3 h-3"></i></button>
+          <button style="color:var(--w-muted)"><i data-lucide="x" class="w-3 h-3"></i></button>
+        </span>
+        <!-- Chip: 운동 (마지막, → 비활성) -->
+        <span class="inline-flex items-center gap-0.5 px-2 py-1 border border-[--w-border] rounded text-xs" style="background:var(--w-fill)">
+          <button style="color:var(--w-muted)"><i data-lucide="chevron-left" class="w-3 h-3"></i></button>
+          <span class="px-1">운동</span>
+          <button style="color:var(--w-muted);opacity:.3;cursor:not-allowed"><i data-lucide="chevron-right" class="w-3 h-3"></i></button>
+          <button style="color:var(--w-muted)"><i data-lucide="x" class="w-3 h-3"></i></button>
+        </span>
+      </div>
+      <div class="flex gap-2">
+        <input type="text" placeholder="키워드 추가..." class="flex-1 border border-[--w-border] rounded px-3 py-2 text-sm outline-none" style="background:white" />
+        <button class="flex items-center gap-1 px-3 py-2 border border-[--w-border] rounded text-sm">
+          <i data-lucide="plus" class="w-4 h-4"></i><span class="hidden @sm:inline">추가</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Mobile: 탭 바 (@md: 이상에서 숨김) -->
+    <div class="flex border-b border-[--w-border] mb-3 overflow-x-auto @md:hidden">
+      <button class="px-4 py-2 text-sm whitespace-nowrap" style="border-bottom:2px solid var(--w-text);font-weight:bold">React</button>
+      <button class="px-4 py-2 text-sm whitespace-nowrap" style="color:var(--w-muted)">주식</button>
+      <button class="px-4 py-2 text-sm whitespace-nowrap" style="color:var(--w-muted)">운동</button>
+    </div>
+
+    <!-- 컬럼 영역: 모바일=단일, 데스크탑=멀티 -->
+    <div class="flex flex-col @md:flex-row @md:overflow-x-auto gap-3">
+
+      <!-- Column: React -->
+      <div class="w-full @md:min-w-64 @md:w-72 flex-shrink-0">
+        <div class="hidden @md:flex items-center justify-between mb-2 pb-2 border-b border-[--w-border]">
+          <span class="text-sm font-bold">React</span>
+          <span class="text-xs" style="color:var(--w-muted)">8개</span>
+        </div>
+        <div class="flex flex-col gap-2">
+          <!-- Card -->
+          <div class="border border-[--w-border] rounded overflow-hidden cursor-pointer" style="background:white">
+            <div class="aspect-video" style="background:var(--w-fill);display:flex;align-items:center;justify-content:center">
+              <i data-lucide="play-circle" class="w-8 h-8" style="color:var(--w-muted)"></i>
+            </div>
+            <div class="p-2">
+              <div class="text-sm font-medium leading-tight mb-1">React 18 Concurrent 기능 완벽 정리</div>
+              <div class="flex justify-between text-xs mb-2" style="color:var(--w-muted)"><span>Fireship</span><span>3일 전</span></div>
+              <button class="w-full text-xs px-2 py-1 border border-[--w-border] rounded" style="background:var(--w-bg)">요약 보기</button>
+            </div>
+          </div>
+          <div class="border border-[--w-border] rounded overflow-hidden cursor-pointer" style="background:white">
+            <div class="aspect-video" style="background:var(--w-fill);display:flex;align-items:center;justify-content:center">
+              <i data-lucide="play-circle" class="w-8 h-8" style="color:var(--w-muted)"></i>
+            </div>
+            <div class="p-2">
+              <div class="text-sm font-medium leading-tight mb-1">React Query v5 완전 가이드</div>
+              <div class="flex justify-between text-xs mb-2" style="color:var(--w-muted)"><span>ByteGrad</span><span>1주 전</span></div>
+              <button class="w-full text-xs px-2 py-1 border border-[--w-border] rounded" style="background:var(--w-bg)">요약 보기</button>
+            </div>
+          </div>
+          <p class="text-xs text-center" style="color:var(--w-muted)">+ 6개 더</p>
+        </div>
+      </div>
+
+      <!-- Column: 주식 (데스크탑만) -->
+      <div class="hidden @md:block w-72 flex-shrink-0">
+        <div class="flex items-center justify-between mb-2 pb-2 border-b border-[--w-border]">
+          <span class="text-sm font-bold">주식</span>
+          <span class="text-xs" style="color:var(--w-muted)">8개</span>
+        </div>
+        <div class="flex flex-col gap-2">
+          <div class="border border-[--w-border] rounded overflow-hidden cursor-pointer" style="background:white">
+            <div class="aspect-video" style="background:var(--w-fill);display:flex;align-items:center;justify-content:center">
+              <i data-lucide="play-circle" class="w-8 h-8" style="color:var(--w-muted)"></i>
+            </div>
+            <div class="p-2">
+              <div class="text-sm font-medium leading-tight mb-1">2024 하반기 주식 시장 전망</div>
+              <div class="flex justify-between text-xs mb-2" style="color:var(--w-muted)"><span>삼프로TV</span><span>1일 전</span></div>
+              <button class="w-full text-xs px-2 py-1 border border-[--w-border] rounded" style="background:var(--w-bg)">요약 보기</button>
+            </div>
+          </div>
+          <div class="border border-[--w-border] rounded overflow-hidden cursor-pointer" style="background:white">
+            <div class="aspect-video" style="background:var(--w-fill);display:flex;align-items:center;justify-content:center">
+              <i data-lucide="play-circle" class="w-8 h-8" style="color:var(--w-muted)"></i>
+            </div>
+            <div class="p-2">
+              <div class="text-sm font-medium leading-tight mb-1">배당주 포트폴리오 구성 방법</div>
+              <div class="flex justify-between text-xs mb-2" style="color:var(--w-muted)"><span>존리TV</span><span>5일 전</span></div>
+              <button class="w-full text-xs px-2 py-1 border border-[--w-border] rounded" style="background:var(--w-bg)">요약 보기</button>
+            </div>
+          </div>
+          <p class="text-xs text-center" style="color:var(--w-muted)">+ 6개 더</p>
+        </div>
+      </div>
+
+      <!-- Column: 운동 (데스크탑만) -->
+      <div class="hidden @md:block w-72 flex-shrink-0">
+        <div class="flex items-center justify-between mb-2 pb-2 border-b border-[--w-border]">
+          <span class="text-sm font-bold">운동</span>
+          <span class="text-xs" style="color:var(--w-muted)">8개</span>
+        </div>
+        <div class="flex flex-col gap-2">
+          <div class="border border-[--w-border] rounded overflow-hidden cursor-pointer" style="background:white">
+            <div class="aspect-video" style="background:var(--w-fill);display:flex;align-items:center;justify-content:center">
+              <i data-lucide="play-circle" class="w-8 h-8" style="color:var(--w-muted)"></i>
+            </div>
+            <div class="p-2">
+              <div class="text-sm font-medium leading-tight mb-1">초보자를 위한 스쿼트 완전 정복</div>
+              <div class="flex justify-between text-xs mb-2" style="color:var(--w-muted)"><span>핏블리</span><span>2일 전</span></div>
+              <button class="w-full text-xs px-2 py-1 border border-[--w-border] rounded" style="background:var(--w-bg)">요약 보기</button>
+            </div>
+          </div>
+          <div class="border border-[--w-border] rounded overflow-hidden cursor-pointer" style="background:white">
+            <div class="aspect-video" style="background:var(--w-fill);display:flex;align-items:center;justify-content:center">
+              <i data-lucide="play-circle" class="w-8 h-8" style="color:var(--w-muted)"></i>
+            </div>
+            <div class="p-2">
+              <div class="text-sm font-medium leading-tight mb-1">홈트 30일 챌린지 완성 가이드</div>
+              <div class="flex justify-between text-xs mb-2" style="color:var(--w-muted)"><span>헬스왕</span><span>1주 전</span></div>
+              <button class="w-full text-xs px-2 py-1 border border-[--w-border] rounded" style="background:var(--w-bg)">요약 보기</button>
+            </div>
+          </div>
+          <p class="text-xs text-center" style="color:var(--w-muted)">+ 6개 더</p>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="screen-notes"><details open><summary>Notes</summary>
+      <p>시나리오 2, 4, 5, 7, 10, 11 — 메인 피드 정상 상태</p>
+      <ul>
+        <li>트리거: 키워드 1개 이상 등록 / 새로고침 후 로컬 스토리지 복원</li>
+        <li>인터랙션: 칩 ← → 클릭 → 컬럼 순서 변경 / 칩 × → 컬럼 제거 / 카드 클릭 → 새 탭 YouTube</li>
+        <li>모바일(Mobile 버튼): 탭 바 표시, 컬럼 1개씩 / 데스크탑(Desktop 버튼): 컬럼 나란히</li>
+        <li>전환: 키워드 0개 → 빈 상태 화면</li>
+      </ul>
+    </details></div>
+  </div>
+</div>
+
+<!-- ===== SCREEN 2: 로딩 ===== -->
+<div id="screen-2" class="screen" data-scenario="scenario-6">
+  <div class="screen-content @container max-w-5xl mx-auto p-4">
+    <h2 class="text-base font-bold mb-4" style="color:var(--w-muted);border-bottom:1px solid var(--w-border);padding-bottom:8px">로딩 — 스켈레톤 UI</h2>
+
+    <div class="border border-[--w-border] rounded-lg p-3 mb-4" style="background:white">
+      <div class="flex flex-wrap gap-1 mb-2">
+        <span class="inline-flex items-center gap-0.5 px-2 py-1 border border-[--w-border] rounded text-xs" style="background:var(--w-fill)">
+          <button style="color:var(--w-muted);opacity:.3"><i data-lucide="chevron-left" class="w-3 h-3"></i></button>
+          <span class="px-1">React</span>
+          <button style="color:var(--w-muted);opacity:.3"><i data-lucide="chevron-right" class="w-3 h-3"></i></button>
+          <button style="color:var(--w-muted)"><i data-lucide="x" class="w-3 h-3"></i></button>
+        </span>
+      </div>
+      <div class="flex gap-2">
+        <input type="text" placeholder="키워드 추가..." class="flex-1 border border-[--w-border] rounded px-3 py-2 text-sm" style="background:white" />
+        <button class="flex items-center gap-1 px-3 py-2 border border-[--w-border] rounded text-sm"><i data-lucide="plus" class="w-4 h-4"></i></button>
+      </div>
+    </div>
+
+    <div class="w-full @md:w-72">
+      <div class="flex items-center justify-between mb-2 pb-2 border-b border-[--w-border]">
+        <span class="text-sm font-bold">React</span>
+        <i data-lucide="loader" class="w-4 h-4 w-spin" style="color:var(--w-muted)"></i>
+      </div>
+      <div class="flex flex-col gap-2">
+        <div class="border border-[--w-border] rounded overflow-hidden" style="background:white">
+          <div class="aspect-video w-skeleton"></div>
+          <div class="p-2 flex flex-col gap-2">
+            <div class="w-skeleton h-4 rounded w-full"></div>
+            <div class="w-skeleton h-3 rounded w-3/4"></div>
+            <div class="w-skeleton h-7 rounded w-full"></div>
+          </div>
+        </div>
+        <div class="border border-[--w-border] rounded overflow-hidden" style="background:white">
+          <div class="aspect-video w-skeleton"></div>
+          <div class="p-2 flex flex-col gap-2">
+            <div class="w-skeleton h-4 rounded w-full"></div>
+            <div class="w-skeleton h-3 rounded w-2/3"></div>
+            <div class="w-skeleton h-7 rounded w-full"></div>
+          </div>
+        </div>
+        <div class="border border-[--w-border] rounded overflow-hidden" style="background:white">
+          <div class="aspect-video w-skeleton"></div>
+          <div class="p-2 flex flex-col gap-2">
+            <div class="w-skeleton h-4 rounded w-full"></div>
+            <div class="w-skeleton h-3 rounded w-4/5"></div>
+            <div class="w-skeleton h-7 rounded w-full"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="screen-notes"><details open><summary>Notes</summary>
+      <p>시나리오 6 — 영상 목록 로딩 중</p>
+      <ul>
+        <li>트리거: 키워드 추가 직후 / 새로고침 직후</li>
+        <li>인터랙션: 로딩 중에도 다른 키워드 추가 가능</li>
+        <li>전환: 응답 수신 → 메인 피드 / 실패 → 에러 상태</li>
+      </ul>
+    </details></div>
+  </div>
+</div>
+
+<!-- ===== SCREEN 3: AI 요약 ===== -->
+<div id="screen-3" class="screen" data-scenario="scenario-8">
+  <div class="screen-content @container max-w-5xl mx-auto p-4">
+    <h2 class="text-base font-bold mb-4" style="color:var(--w-muted);border-bottom:1px solid var(--w-border);padding-bottom:8px">AI 요약 — 전 / 중 / 후</h2>
+
+    <div class="flex flex-col @md:flex-row gap-4">
+
+      <!-- ① 요약 전 -->
+      <div class="flex-1">
+        <p class="text-xs font-bold mb-2" style="color:var(--w-muted)">① 요약 전</p>
+        <div class="border border-[--w-border] rounded overflow-hidden" style="background:white">
+          <div class="aspect-video" style="background:var(--w-fill);display:flex;align-items:center;justify-content:center">
+            <i data-lucide="play-circle" class="w-8 h-8" style="color:var(--w-muted)"></i>
+          </div>
+          <div class="p-2">
+            <div class="text-sm font-medium leading-tight mb-1">React 18 Concurrent 기능 완벽 정리</div>
+            <div class="flex justify-between text-xs mb-2" style="color:var(--w-muted)"><span>Fireship</span><span>3일 전</span></div>
+            <button class="w-full text-xs px-2 py-1 border border-[--w-border] rounded" style="background:var(--w-bg)">요약 보기</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ② 생성 중 -->
+      <div class="flex-1">
+        <p class="text-xs font-bold mb-2" style="color:var(--w-muted)">② 생성 중</p>
+        <div class="border border-[--w-border] rounded overflow-hidden" style="background:white">
+          <div class="aspect-video" style="background:var(--w-fill);display:flex;align-items:center;justify-content:center">
+            <i data-lucide="play-circle" class="w-8 h-8" style="color:var(--w-muted)"></i>
+          </div>
+          <div class="p-2">
+            <div class="text-sm font-medium leading-tight mb-1">React 18 Concurrent 기능 완벽 정리</div>
+            <div class="flex justify-between text-xs mb-2" style="color:var(--w-muted)"><span>Fireship</span><span>3일 전</span></div>
+            <button disabled class="w-full text-xs px-2 py-1 border border-[--w-border] rounded flex items-center justify-center gap-1" style="background:var(--w-bg);opacity:.6">
+              <i data-lucide="loader" class="w-3 h-3 w-spin"></i> 요약 생성 중...
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ③ 완료 -->
+      <div class="flex-1">
+        <p class="text-xs font-bold mb-2" style="color:var(--w-muted)">③ 완료</p>
+        <div class="border border-[--w-border] rounded overflow-hidden" style="background:white">
+          <div class="aspect-video" style="background:var(--w-fill);display:flex;align-items:center;justify-content:center">
+            <i data-lucide="play-circle" class="w-8 h-8" style="color:var(--w-muted)"></i>
+          </div>
+          <div class="p-2">
+            <div class="text-sm font-medium leading-tight mb-1">React 18 Concurrent 기능 완벽 정리</div>
+            <div class="flex justify-between text-xs mb-2" style="color:var(--w-muted)"><span>Fireship</span><span>3일 전</span></div>
+            <div class="text-xs p-2 rounded border border-[--w-border]" style="background:var(--w-bg)">
+              <i data-lucide="sparkles" class="w-3 h-3 inline mr-1" style="color:var(--w-muted)"></i>
+              useTransition과 Suspense로 무거운 렌더링을 분리해 UI 응답성을 유지하는 방법을 단계별로 설명합니다.
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="screen-notes"><details open><summary>Notes</summary>
+      <p>시나리오 8 — AI 한 줄 요약 생성</p>
+      <ul>
+        <li>트리거: 영상 카드 "요약 보기" 클릭</li>
+        <li>완료 후 버튼 사라지고 요약 텍스트 자리 차지</li>
+        <li>실패 시 버튼 원래 상태 복원</li>
+      </ul>
+    </details></div>
+  </div>
+</div>
+
+<!-- ===== SCREEN 4: API 에러 ===== -->
+<div id="screen-4" class="screen" data-scenario="scenario-9">
+  <div class="screen-content @container max-w-5xl mx-auto p-4">
+    <h2 class="text-base font-bold mb-4" style="color:var(--w-muted);border-bottom:1px solid var(--w-border);padding-bottom:8px">API 에러 — 특정 컬럼 실패</h2>
+
+    <div class="border border-[--w-border] rounded-lg p-3 mb-4" style="background:white">
+      <div class="flex flex-wrap gap-1 mb-2">
+        <span class="inline-flex items-center gap-0.5 px-2 py-1 border border-[--w-border] rounded text-xs" style="background:var(--w-fill)">
+          <button style="color:var(--w-muted);opacity:.3"><i data-lucide="chevron-left" class="w-3 h-3"></i></button>
+          <span class="px-1">React</span>
+          <button style="color:var(--w-muted)"><i data-lucide="chevron-right" class="w-3 h-3"></i></button>
+          <button style="color:var(--w-muted)"><i data-lucide="x" class="w-3 h-3"></i></button>
+        </span>
+        <span class="inline-flex items-center gap-0.5 px-2 py-1 border border-[--w-border] rounded text-xs" style="background:var(--w-fill)">
+          <button style="color:var(--w-muted)"><i data-lucide="chevron-left" class="w-3 h-3"></i></button>
+          <span class="px-1">주식</span>
+          <button style="color:var(--w-muted);opacity:.3"><i data-lucide="chevron-right" class="w-3 h-3"></i></button>
+          <button style="color:var(--w-muted)"><i data-lucide="x" class="w-3 h-3"></i></button>
+        </span>
+      </div>
+      <div class="flex gap-2">
+        <input type="text" placeholder="키워드 추가..." class="flex-1 border border-[--w-border] rounded px-3 py-2 text-sm" style="background:white" />
+        <button class="flex items-center gap-1 px-3 py-2 border border-[--w-border] rounded text-sm"><i data-lucide="plus" class="w-4 h-4"></i></button>
+      </div>
+    </div>
+
+    <!-- Mobile tabs -->
+    <div class="flex border-b border-[--w-border] mb-3 @md:hidden">
+      <button class="px-4 py-2 text-sm" style="border-bottom:2px solid var(--w-text);font-weight:bold">React</button>
+      <button class="px-4 py-2 text-sm" style="color:var(--w-muted)">주식</button>
+    </div>
+
+    <div class="flex flex-col @md:flex-row gap-3">
+
+      <!-- Column: React ERROR -->
+      <div class="w-full @md:w-72 flex-shrink-0">
+        <div class="hidden @md:flex items-center justify-between mb-2 pb-2 border-b border-[--w-border]">
+          <span class="text-sm font-bold">React</span>
+          <i data-lucide="alert-circle" class="w-4 h-4" style="color:var(--w-muted)"></i>
+        </div>
+        <div class="flex flex-col items-center justify-center py-8 border border-[--w-border] rounded text-center" style="background:white">
+          <i data-lucide="wifi-off" class="w-8 h-8 mb-3" style="color:var(--w-muted)"></i>
+          <p class="text-sm mb-1" style="color:var(--w-text)">영상을 불러오지 못했습니다</p>
+          <p class="text-xs mb-4" style="color:var(--w-muted)">잠시 후 다시 시도해 주세요</p>
+          <button class="flex items-center gap-1 px-3 py-2 border border-[--w-border] rounded text-sm" style="background:var(--w-bg)">
+            <i data-lucide="refresh-cw" class="w-3 h-3"></i> 다시 시도
+          </button>
+        </div>
+      </div>
+
+      <!-- Column: 주식 정상 (데스크탑만) -->
+      <div class="hidden @md:block w-72 flex-shrink-0">
+        <div class="flex items-center justify-between mb-2 pb-2 border-b border-[--w-border]">
+          <span class="text-sm font-bold">주식</span>
+          <span class="text-xs" style="color:var(--w-muted)">8개</span>
+        </div>
+        <div class="flex flex-col gap-2">
+          <div class="border border-[--w-border] rounded overflow-hidden cursor-pointer" style="background:white">
+            <div class="aspect-video" style="background:var(--w-fill);display:flex;align-items:center;justify-content:center">
+              <i data-lucide="play-circle" class="w-8 h-8" style="color:var(--w-muted)"></i>
+            </div>
+            <div class="p-2">
+              <div class="text-sm font-medium leading-tight mb-1">2024 하반기 주식 시장 전망</div>
+              <div class="flex justify-between text-xs mb-2" style="color:var(--w-muted)"><span>삼프로TV</span><span>1일 전</span></div>
+              <button class="w-full text-xs px-2 py-1 border border-[--w-border] rounded" style="background:var(--w-bg)">요약 보기</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="screen-notes"><details open><summary>Notes</summary>
+      <p>시나리오 9 — YouTube API 에러</p>
+      <ul>
+        <li>트리거: 특정 키워드 API 호출 실패 (quota 초과, 네트워크 오류)</li>
+        <li>인터랙션: "다시 시도" → 해당 컬럼만 재요청 (다른 컬럼 영향 없음)</li>
+      </ul>
+    </details></div>
+  </div>
+</div>
+
+<!-- ===== SCREEN 5: 키워드 최대 ===== -->
+<div id="screen-5" class="screen" data-scenario="scenario-3">
+  <div class="screen-content @container max-w-5xl mx-auto p-4">
+    <h2 class="text-base font-bold mb-4" style="color:var(--w-muted);border-bottom:1px solid var(--w-border);padding-bottom:8px">키워드 최대 — 6개 등록 상태</h2>
+
+    <div class="border border-[--w-border] rounded-lg p-3 mb-4" style="background:white">
+      <div class="flex flex-wrap gap-1 mb-2">
+        <span class="inline-flex items-center gap-0.5 px-2 py-1 border border-[--w-border] rounded text-xs" style="background:var(--w-fill)">
+          <button style="color:var(--w-muted);opacity:.3"><i data-lucide="chevron-left" class="w-3 h-3"></i></button>
+          <span class="px-1">React</span>
+          <button style="color:var(--w-muted)"><i data-lucide="chevron-right" class="w-3 h-3"></i></button>
+          <button style="color:var(--w-muted)"><i data-lucide="x" class="w-3 h-3"></i></button>
+        </span>
+        <span class="inline-flex items-center gap-0.5 px-2 py-1 border border-[--w-border] rounded text-xs" style="background:var(--w-fill)">
+          <button style="color:var(--w-muted)"><i data-lucide="chevron-left" class="w-3 h-3"></i></button>
+          <span class="px-1">주식</span>
+          <button style="color:var(--w-muted)"><i data-lucide="chevron-right" class="w-3 h-3"></i></button>
+          <button style="color:var(--w-muted)"><i data-lucide="x" class="w-3 h-3"></i></button>
+        </span>
+        <span class="inline-flex items-center gap-0.5 px-2 py-1 border border-[--w-border] rounded text-xs" style="background:var(--w-fill)">
+          <button style="color:var(--w-muted)"><i data-lucide="chevron-left" class="w-3 h-3"></i></button>
+          <span class="px-1">운동</span>
+          <button style="color:var(--w-muted)"><i data-lucide="chevron-right" class="w-3 h-3"></i></button>
+          <button style="color:var(--w-muted)"><i data-lucide="x" class="w-3 h-3"></i></button>
+        </span>
+        <span class="inline-flex items-center gap-0.5 px-2 py-1 border border-[--w-border] rounded text-xs" style="background:var(--w-fill)">
+          <button style="color:var(--w-muted)"><i data-lucide="chevron-left" class="w-3 h-3"></i></button>
+          <span class="px-1">요리</span>
+          <button style="color:var(--w-muted)"><i data-lucide="chevron-right" class="w-3 h-3"></i></button>
+          <button style="color:var(--w-muted)"><i data-lucide="x" class="w-3 h-3"></i></button>
+        </span>
+        <span class="inline-flex items-center gap-0.5 px-2 py-1 border border-[--w-border] rounded text-xs" style="background:var(--w-fill)">
+          <button style="color:var(--w-muted)"><i data-lucide="chevron-left" class="w-3 h-3"></i></button>
+          <span class="px-1">영어</span>
+          <button style="color:var(--w-muted)"><i data-lucide="chevron-right" class="w-3 h-3"></i></button>
+          <button style="color:var(--w-muted)"><i data-lucide="x" class="w-3 h-3"></i></button>
+        </span>
+        <span class="inline-flex items-center gap-0.5 px-2 py-1 border border-[--w-border] rounded text-xs" style="background:var(--w-fill)">
+          <button style="color:var(--w-muted)"><i data-lucide="chevron-left" class="w-3 h-3"></i></button>
+          <span class="px-1">AI</span>
+          <button style="color:var(--w-muted);opacity:.3"><i data-lucide="chevron-right" class="w-3 h-3"></i></button>
+          <button style="color:var(--w-muted)"><i data-lucide="x" class="w-3 h-3"></i></button>
+        </span>
+      </div>
+      <!-- Disabled input -->
+      <div class="flex gap-2 mb-1">
+        <input disabled value="게임" class="flex-1 border border-[--w-border] rounded px-3 py-2 text-sm" style="background:var(--w-fill);opacity:.5" />
+        <button disabled class="flex items-center gap-1 px-3 py-2 border border-[--w-border] rounded text-sm" style="opacity:.35;cursor:not-allowed">
+          <i data-lucide="plus" class="w-4 h-4"></i>
+        </button>
+      </div>
+      <p class="text-xs flex items-center gap-1" style="color:var(--w-muted)">
+        <i data-lucide="info" class="w-3 h-3"></i>
+        최대 6개까지 추가할 수 있습니다. 기존 키워드를 삭제하면 추가할 수 있어요.
+      </p>
+    </div>
+
+    <div class="screen-notes"><details open><summary>Notes</summary>
+      <p>시나리오 3 — 키워드 최대 6개 초과 시도</p>
+      <ul>
+        <li>트리거: 키워드 6개 등록 상태에서 추가 시도</li>
+        <li>인터랙션: 입력란 비활성화 + "+추가" 비활성화 + 안내 메시지</li>
+        <li>전환: 기존 키워드 × 삭제 → 입력 가능 상태로 복원</li>
+      </ul>
+    </details></div>
+  </div>
+</div>
+
+<script>
+var screenIds = [];
+function show(id) {
+  document.querySelectorAll('.screen').forEach(function(s){s.classList.remove('active')});
+  document.getElementById('screen-'+id).classList.add('active');
+  document.querySelectorAll('nav button[id^="nav-"]').forEach(function(b){b.classList.remove('active')});
+  document.getElementById('nav-'+id).classList.add('active');
+}
+function setViewport(mode) {
+  document.body.classList.remove('viewport-mobile','viewport-desktop');
+  document.body.classList.add('viewport-'+mode);
+  document.querySelectorAll('.vp-toggle button').forEach(function(b){b.classList.remove('active')});
+  document.getElementById('vp-'+mode).classList.add('active');
+}
+document.addEventListener('DOMContentLoaded', function() {
+  document.querySelectorAll('nav button[id^="nav-"]').forEach(function(b){
+    screenIds.push(parseInt(b.id.replace('nav-','')));
+  });
+  var first = document.querySelector('nav button[id^="nav-"]');
+  if (first) first.click();
+  lucide.createIcons();
+});
+</script>
+</body>
+</html>

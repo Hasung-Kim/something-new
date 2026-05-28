@@ -14,14 +14,17 @@ function loadFromStorage(): Keyword[] {
 }
 
 export function useKeywordStore() {
-  const [keywords, setKeywords] = useState<Keyword[]>(() => {
-    if (typeof window === 'undefined') return []
-    return loadFromStorage()
-  })
+  const [keywords, setKeywords] = useState<Keyword[]>([])
+  const [mounted, setMounted] = useState(false)
 
   useEffect(() => {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(keywords))
-  }, [keywords])
+    setKeywords(loadFromStorage())
+    setMounted(true)
+  }, [])
+
+  useEffect(() => {
+    if (mounted) localStorage.setItem(STORAGE_KEY, JSON.stringify(keywords))
+  }, [keywords, mounted])
 
   function add(label: string) {
     const trimmed = label.trim()

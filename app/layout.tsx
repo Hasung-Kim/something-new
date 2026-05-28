@@ -6,8 +6,8 @@ import "./globals.css";
 const inter = Inter({ subsets: ["latin"], variable: "--font-sans" });
 
 export const metadata: Metadata = {
-  title: "Kanban Todo",
-  description: "Kanban board application",
+  title: "YouTube Intent Feed",
+  description: "여러 키워드의 YouTube 영상을 한 화면에서 병렬로 탐색하세요",
 };
 
 export default function RootLayout({
